@@ -18,7 +18,6 @@ namespace Task2
             int totalExperiments = 1000;
             int successfulExperiments = 0;
             CollisiumSandbox sandbox = _services.CreateScope().ServiceProvider.GetRequiredService<CollisiumSandbox>();
-            //CollisiumSandbox sandbox = new CollisiumSandbox(partner);
 
             for (int i = 0; i < totalExperiments; i += 1)
             {

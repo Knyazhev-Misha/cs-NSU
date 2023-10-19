@@ -34,9 +34,11 @@ namespace Task2
                     services.AddScoped<IDeckShuffler, RandomDeckShuffler>();
 
                     services.AddScoped<ICardPickStrategy, FirstCardStrategy>();
+
+                    services.AddScoped<ICardPickStrategy, RandomCardStrategy>();
             
                     services.AddScoped<IPartner, Mark>();
-                
+                    
                     services.AddScoped<IPartner, Ilon>();
                     
                     services.AddScoped<Deck>();

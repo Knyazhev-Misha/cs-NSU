@@ -5,25 +5,42 @@ namespace Task2
     {
 
         private IPartner mark;
-        public CollisiumSandbox(IPartner partner){
-            mark = partner;
-            Console.Write("Mark: " + mark.name + "\n");
+        private IPartner ilon;
+        private ICardPickStrategy randomStrategy;
+        private ICardPickStrategy firstStrategy;
+        private Deck deck;
+        private IDeckShuffler shufller;
+
+
+
+
+
+        public CollisiumSandbox(IEnumerable<IPartner> partners, 
+        IEnumerable<ICardPickStrategy> strategys, Deck deck, IDeckShuffler shufller){
+        
+            var partnersArray = partners.ToArray();
+
+            this.mark = partnersArray[0];
+            this.ilon = partnersArray[1];
+            
+            var strategysArray = strategys.ToArray();
+
+            this.firstStrategy = strategysArray[0];
+            this.randomStrategy = strategysArray[1];
+
+            this.deck = deck;
+
+            this.shufller = shufller;            
         }
 
         public bool RunExperiment()
         {
-            ICardPickStrategy strategy = new FirstCardStrategy();
-            IPartner mark = new Mark(strategy);
-            IPartner ilon = new Ilon(strategy);
-            Deck deck = new Deck();
-            IDeckShuffler shufller = new RandomDeckShuffler(deck);
             shufller.ShuffleDeck();
             IPartner[] players = new IPartner[]{mark, ilon};
             players = shufller.GiveDeckforPlayer(players);
             mark = players[0];
             ilon = players[1];
 
-           // Console.Write("Mark: " + mark.name + " Ilon: " + ilon.name + "\n");
 
             int pickNumCardofMark = mark.Play(ilon.cards);
             int pickNumCardofIlon = ilon.Play(mark.cards);
