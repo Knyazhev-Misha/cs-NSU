@@ -11,22 +11,19 @@ namespace Task2
         private Deck deck;
         private IDeckShuffler shufller;
 
-
-
-
-
         public CollisiumSandbox(IEnumerable<IPartner> partners, 
         IEnumerable<ICardPickStrategy> strategys, Deck deck, IDeckShuffler shufller){
-        
-            var partnersArray = partners.ToArray();
-
-            this.mark = partnersArray[0];
-            this.ilon = partnersArray[1];
             
             var strategysArray = strategys.ToArray();
-
             this.firstStrategy = strategysArray[0];
             this.randomStrategy = strategysArray[1];
+
+            var partnersArray = partners.ToArray();
+            this.mark = partnersArray[0];
+            this.ilon = partnersArray[1];
+
+            this.mark.strategy = firstStrategy;
+            this.ilon.strategy = randomStrategy;
 
             this.deck = deck;
 
@@ -41,9 +38,8 @@ namespace Task2
             mark = players[0];
             ilon = players[1];
 
-
-            int pickNumCardofMark = mark.Play(ilon.cards);
-            int pickNumCardofIlon = ilon.Play(mark.cards);
+            int pickNumCardofMark = mark.Play(mark.cards);
+            int pickNumCardofIlon = ilon.Play(ilon.cards);
 
             Card cardIlon = ilon.cards[pickNumCardofMark];
             Card cardMark = mark.cards[pickNumCardofIlon];

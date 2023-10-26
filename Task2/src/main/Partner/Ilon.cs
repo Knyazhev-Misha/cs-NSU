@@ -1,10 +1,16 @@
 using CardPickStrategy;
 namespace Task2
 {
-    public class Mark : IPartner
+    public class Ilon : IPartner
     {
 
-        private ICardPickStrategy strategy;
+        private ICardPickStrategy _strategy;
+        public ICardPickStrategy strategy
+        {
+            get => _strategy;
+            set => _strategy = value;
+        }
+
         private Card[] _cards;
         public Card[] cards
         {
@@ -17,14 +23,14 @@ namespace Task2
             get => _name;
             set => _name = value;
         }
-        
-        public Mark(ICardPickStrategy strategy){
-            this.strategy = strategy;
-            _name = "Mark";
+
+
+        public Ilon(){
+            _name = "Ilon";
         }
 
         public int Play(Card[] cards){
-            return strategy.Pick(cards);
+            return _strategy.Pick(cards);
         }
     }
 }

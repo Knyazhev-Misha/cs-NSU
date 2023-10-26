@@ -11,6 +11,7 @@ namespace Task2
     {
         _services = services;
         _logger = logger;
+
     }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -36,7 +37,7 @@ namespace Task2
 
             double probability = (double)successfulExperiments / (double)totalExperiments;
             Console.Write("number succes: " + successfulExperiments + "\nnumber experiment: " 
-            +  totalExperiments + "\nprobability: " + probability);
+            +  totalExperiments + "\nprobability: " + probability + "\n");
 
             Dispose();
         }

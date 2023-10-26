@@ -3,10 +3,14 @@ namespace Task2
 {
     public class RandomDeckShuffler : IDeckShuffler
     {
-        private Deck deck;
+        private Deck _deck;
+        public Deck deck{
+            get => _deck;
+            set => _deck = value;
+        }
 
         public RandomDeckShuffler(Deck deck){
-            this.deck = deck;
+            this._deck = deck;
         }
 
         public void ShuffleDeck()
@@ -14,7 +18,7 @@ namespace Task2
             Random rand = new Random();
             int numChangeCard1, numChangeCard2;
             Card tmp;
-            Card[] cards = deck.cards;
+            Card[] cards = _deck.cards;
             for(int i = 0; i < cards.Length; i += 1){
                 numChangeCard1 = rand.Next(cards.Length);
                 numChangeCard2 = rand.Next(cards.Length);
@@ -31,7 +35,7 @@ namespace Task2
 
         public IPartner[] GiveDeckforPlayer(IPartner[] players)
         {
-            int numberPlayerCards =  deck.cards.Length / players.Length;
+            int numberPlayerCards =  _deck.cards.Length / players.Length;
 
             Card[] cardsPlayer = new Card[numberPlayerCards];
 
@@ -39,7 +43,7 @@ namespace Task2
                 cardsPlayer = new Card[numberPlayerCards];
                 for(int t = 0; t < numberPlayerCards; t += 1)
                 {
-                    cardsPlayer[t] = deck.cards[t + i * numberPlayerCards];
+                    cardsPlayer[t] = _deck.cards[t + i * numberPlayerCards];
                 }
                 players[i].cards = cardsPlayer;
             }

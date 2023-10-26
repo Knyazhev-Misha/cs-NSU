@@ -1,6 +1,9 @@
 using Xunit;
 using CardPickStrategy; 
 using Task2;
+using Moq;
+using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 public class DeckTests
 {
@@ -76,5 +79,58 @@ public class StrategyTests
         Assert.Equal(pickedCardBlack, 0);
     }
 }
+
+ public class CollisiumSandboxTests
+{
+    [Fact]
+    public void RunExperiment_ShouldCallShuffleDeckOnce()
+    {
+            
+        var mockShuffler = new Mock<IDeckShuffler>();
+        var mockDeck = new Mock<Deck>();
+        
+        var mockMark = new Mock<IPartner>();
+        var mockIlon = new Mock<IPartner>();
+
+        mockMark.Setup(m => m.Play(It.IsAny<Card[]>())).Returns(0);
+        mockIlon.Setup(m => m.Play(It.IsAny<Card[]>())).Returns(0);
+
+        Card[] mockMarkCards = new Card[18];
+        Card[] mockIlonCards = new Card[18];
+
+        for(int i = 0; i < 18; i += 1){
+            mockMarkCards[i] = new Card("Red");
+            mockIlonCards[i] = new Card("Black");
+        }
+
+        mockMark.Setup(m => m.cards).Returns(mockMarkCards);
+        mockIlon.Setup(m => m.cards).Returns(mockIlonCards);        
+        
+        var partners = new List<IPartner> { mockMark.Object, mockIlon.Object };
+        
+        var mockFirstCardStrategy = new Mock<FirstCardStrategy>();
+        
+        var strategies = new List<ICardPickStrategy> { mockFirstCardStrategy.Object, 
+        mockFirstCardStrategy.Object };
+        
+        IPartner[] players = new IPartner[]{mockMark.Object, mockIlon.Object};
+        
+        mockShuffler.Setup(s => s.GiveDeckforPlayer(It.IsAny<IPartner[]>()))
+    .Returns((IPartner[] players) => players);
+
+        var sandbox = new Mock<CollisiumSandbox>(partners, strategies, mockDeck.Object, mockShuffler.Object);
+
+
+        bool result = sandbox.Object.RunExperiment();
+
+        mockShuffler.Verify(s => s.ShuffleDeck(), Times.Once);
+        Assert.Equal(result, false);
+    }
+}
+
+
+
+
+
 
 
