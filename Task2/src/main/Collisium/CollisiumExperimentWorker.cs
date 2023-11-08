@@ -25,7 +25,7 @@ namespace Task2
                 if (stoppingToken.IsCancellationRequested)
                     break;
 
-                bool isSuccess =  sandbox.RunExperiment();
+                bool isSuccess =  sandbox.RunExperiment(true);
 
                 if (isSuccess)
                 {

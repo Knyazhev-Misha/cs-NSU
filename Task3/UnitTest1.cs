@@ -1,6 +1,7 @@
 using Xunit;
 using CardPickStrategy; 
 using Task2;
+using Task4;
 using Moq;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
@@ -13,8 +14,8 @@ public class DeckTests
 
         Deck deck = new Deck(); 
 
-        int redCardCount = deck.cards.Count(card => card.colour == "Red");
-        int blackCardCount = deck.cards.Count(card => card.colour == "Black");
+        int redCardCount = deck.cards.Count(card => card.colour == CardColor.Red);
+        int blackCardCount = deck.cards.Count(card => card.colour == CardColor.Black);
 
         Assert.Equal(18, redCardCount); 
         Assert.Equal(18, blackCardCount); 
@@ -66,16 +67,16 @@ public class StrategyTests
 
         for(int i = 0; i < 18; i += 1)
         {
-            cardRed18[i] = new Card("Red");
-            cardBlack18[i] = new Card("Black");
+            cardRed18[i] = new Card(CardColor.Red);
+            cardBlack18[i] = new Card(CardColor.Black);
         }
 
         int pickedCardRed = strategy.Pick(cardRed18);
         int pickedCardBlack = strategy.Pick(cardBlack18);
 
-        Assert.Equal(cardRed18[0].colour, "Red");
+        Assert.Equal(cardRed18[0].colour, CardColor.Red);
         Assert.Equal(pickedCardRed, 0);
-        Assert.Equal(cardBlack18[0].colour, "Black");
+        Assert.Equal(cardBlack18[0].colour, CardColor.Black);
         Assert.Equal(pickedCardBlack, 0);
     }
 }
@@ -99,8 +100,8 @@ public class StrategyTests
         Card[] mockIlonCards = new Card[18];
 
         for(int i = 0; i < 18; i += 1){
-            mockMarkCards[i] = new Card("Red");
-            mockIlonCards[i] = new Card("Black");
+            mockMarkCards[i] = new Card(CardColor.Red);
+            mockIlonCards[i] = new Card(CardColor.Black);
         }
 
         mockMark.Setup(m => m.cards).Returns(mockMarkCards);
@@ -118,17 +119,49 @@ public class StrategyTests
         mockShuffler.Setup(s => s.GiveDeckforPlayer(It.IsAny<IPartner[]>()))
     .Returns((IPartner[] players) => players);
 
-        var sandbox = new Mock<CollisiumSandbox>(partners, strategies, mockDeck.Object, mockShuffler.Object);
+        var sandbox = new Mock<CollisiumSandbox>(partners, strategies, mockShuffler.Object);
 
 
-        bool result = sandbox.Object.RunExperiment();
+        bool result = sandbox.Object.RunExperiment(true);
 
         mockShuffler.Verify(s => s.ShuffleDeck(), Times.Once);
         Assert.Equal(result, false);
     }
 }
 
+public class DBTests
+{
+    [Fact]
+    public void TestDateBaseOnSavwRead()
+    {
+        int number = 100;
 
+        DB db = new DB();
+
+        db.CreateExperements(number); 
+
+        int succesSave = db.CountSuccesOfExperements();
+
+        List<Experiment> experimentsSave = db.experiments;
+
+        db.Save();
+
+        db.Read();
+
+        List<Experiment> experimentsRead = db.experiments;
+
+        for(int i = 0; i < number; i += 1)
+        {
+            Assert.Equal(experimentsSave[i].result, experimentsRead[i].result);
+        }
+
+        List<CollisiumSandbox> sandboxes = db.MappExperementsToSandbox();
+
+        int succesRead = db.CountSuccesOfExperements(sandboxes);
+        
+        Assert.Equal(succesRead, succesSave);
+    }
+}
 
 
 

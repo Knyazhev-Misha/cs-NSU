@@ -26,8 +26,8 @@ namespace Task2
             
             for (int i = 0; i < numberCards; i += 2)
             { 
-                cards[i] = new Card("Red");
-                cards[i + 1] = new Card("Black");
+                cards[i] = new Card(CardColor.Red);
+                cards[i + 1] = new Card(CardColor.Black);
             }
         }
 

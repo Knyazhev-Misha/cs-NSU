@@ -22,8 +22,8 @@ namespace Task1
 
             for (int i = 0; i < numberCards; i += 2)
             {
-                cards[i] = Card.Red;
-                cards[i + 1] = Card.Black;
+                cards[i] = new Card(CardColor.Red);
+                cards[i + 1] = new Card(CardColor.Black);
             }
 
             ShuffleCards();
