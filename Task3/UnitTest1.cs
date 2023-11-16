@@ -138,6 +138,8 @@ public class DBTests
 
         DB db = new DB();
 
+        db.createContext(DbName.LocalSQL);
+
         db.CreateExperements(number); 
 
         int succesSave = db.CountSuccesOfExperements();
