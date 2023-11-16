@@ -8,8 +8,8 @@ namespace Task4
         public int Id { get; set; }
         public int pickNumCardofMark { get; set; }
         public int pickNumCardofIlon { get; set; }
-        public CardColor[] cardsMark { get; set; }
-        public CardColor[] cardsIlon { get; set; }
+        public string cardsMark { get; set; } // Строка для хранения цветов
+        public string cardsIlon { get; set; } // Строка для хранения цветов
         public bool result { get; set; }
     }
 }

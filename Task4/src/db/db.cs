@@ -3,6 +3,9 @@ using Microsoft.Extensions.Configuration;
 using System.Collections;
 using Task2;
 using CardPickStrategy;
+using Microsoft.EntityFrameworkCore.Query.Internal;
+using System.Data.Common;
+using System.Text.Json;
 
 namespace Task4
 {
@@ -13,6 +16,15 @@ namespace Task4
         {
             get => _experiments;
             set => _experiments = value;
+        }
+
+        private ApplicationContext db;
+
+        public void createContext(DbName dbName)
+        {
+            ApplicationContext.SetDb(dbName);
+
+            db = new ApplicationContext();
         }
 
         private CollisiumSandbox CreateCollisiumSandbox(){
@@ -50,11 +62,14 @@ namespace Task4
                         cardsIlon[t] = collisiumSandbox.ilon.cards[t].colour;
                     }
                     
+                    string cardsMarkJson = JsonSerializer.Serialize(cardsMark);
+                    string cardsIlonJson = JsonSerializer.Serialize(cardsIlon);
+
                     Experiment experiment = new Experiment { 
                         pickNumCardofMark = collisiumSandbox.pickNumCardofMark,
                         pickNumCardofIlon = collisiumSandbox.pickNumCardofIlon,
-                        cardsMark = cardsMark,
-                        cardsIlon = cardsIlon,
+                        cardsMark = cardsMarkJson,
+                        cardsIlon = cardsIlonJson,
                         result = result           
                     };
 
@@ -64,7 +79,6 @@ namespace Task4
 
         public void Save()
         {
-            using (ApplicationContext db = new ApplicationContext())
             {   
                 if(_experiments == null)
                 {
@@ -82,7 +96,7 @@ namespace Task4
 
         public void Read()
         {
-            using (ApplicationContext db = new ApplicationContext())
+           // using (ApplicationContext db = new ApplicationContext())
             {
                 _experiments = db.Experiments.ToList();
             }
@@ -95,14 +109,17 @@ namespace Task4
             foreach(Experiment ex in _experiments)
             {
                 CollisiumSandbox collisiumSandbox = CreateCollisiumSandbox();
-
+            
+                CardColor[] colorCardsIlon = JsonSerializer.Deserialize<CardColor[]>(ex.cardsIlon);
+                CardColor[] colorCardsMark = JsonSerializer.Deserialize<CardColor[]>(ex.cardsMark);
+                
                 Card[] cardsMark = new Card[18];
                 Card[] cardsIlon = new Card[18];
 
                 for(int i = 0; i < 18; i += 1)
                 {
-                    cardsMark[i] = new Card(ex.cardsMark[i]);
-                    cardsIlon[i] = new Card(ex.cardsIlon[i]);
+                    cardsMark[i] = new Card(colorCardsMark[i]);
+                    cardsIlon[i] = new Card(colorCardsIlon[i]);
                 }
 
                 collisiumSandbox.mark.cards = cardsMark;
