@@ -10,33 +10,14 @@ namespace Gods
     public class Http
     {
     
-        public static async Task Send(IPartner ilon, IPartner mark, int pickCardIlon, int pickCardMark){
-            string ilonJsonCards = Newtonsoft.Json.JsonConvert.SerializeObject(ilon.cards);
-            string markJsonCards = Newtonsoft.Json.JsonConvert.SerializeObject(mark.cards);
-
+        public static async Task Send(){
             string ilonURL = "http://localhost:1114/IlonRoom";
-            string markURL = "http://localhost:1112/MarkRoom";
-            
+            string markURL = "http://localhost:1113/MarkRoom";
+
             using (HttpClient client = new HttpClient())
             {
-
-                var ilonContent = new PlayerDTO
-                {
-                    pickNumCard = pickCardIlon,
-                    cardsPlayer = markJsonCards
-                };
-
-                var markContent = new PlayerDTO
-                {
-                    pickNumCard = pickCardMark,
-                    cardsPlayer = ilonJsonCards
-                };
-
-                StringContent ilonContentJson = new StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(ilonContent), Encoding.UTF8, "application/json");
-                StringContent markContentJson = new StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(markContent), Encoding.UTF8, "application/json");
-
-                HttpResponseMessage responseIlonRoom = await client.PostAsync(ilonURL, ilonContentJson);
-                HttpResponseMessage responseMarkRoom = await client.PostAsync(markURL, markContentJson);
+                HttpResponseMessage responseIlonRoom = await client.PostAsync(ilonURL, null);
+                HttpResponseMessage responseMarkRoom = await client.PostAsync(markURL, null);
 
                 if (responseIlonRoom.IsSuccessStatusCode && responseMarkRoom.IsSuccessStatusCode)
                 {
@@ -45,8 +26,8 @@ namespace Gods
                     
                     int ilonColourNum, markColourNum;
 
-                    int.TryParse(ilonAnswer, out ilonColourNum);
-                    int.TryParse(markAnswer, out markColourNum);
+                    int.TryParse(ilonAnswer, out markColourNum);
+                    int.TryParse(markAnswer, out ilonColourNum);
 
                     CardColor ilonColour, markColour;
                     if(ilonColourNum == 0)
@@ -79,26 +60,10 @@ namespace Gods
                         result = false;
                     }
 
-                    Console.Write("Ilon cards: ");
-                    for(int i = 0; i < ilon.cards.Length; i += 1)
-                    {
-                        Console.Write($"{i}({ilon.cards[i].colour}) ");
-                    }
-
-                     Console.Write("\nMark cards: ");
-
-                    for(int i = 0; i < mark.cards.Length; i += 1)
-                    {
-                        Console.Write($"{i}({mark.cards[i].colour}) ");
-                    }
-
-                    Console.Write("\n");
-
-                    Console.WriteLine($"Pick Ilon: {pickCardIlon}");
-                    Console.WriteLine($"Pick Mark: {pickCardMark}");
                     Console.WriteLine($"Ilon pick colour: {ilonColour}");
                     Console.WriteLine($"Mark pick colour: {markColour}");
                     Console.WriteLine($"Result: {result}");
+                    Console.WriteLine($"---------------");
                 }
                 else
                 {

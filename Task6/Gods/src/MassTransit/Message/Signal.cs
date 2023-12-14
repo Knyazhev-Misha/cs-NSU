@@ -5,8 +5,7 @@ using CardPickStrategy;
 
 namespace Gods
 {
-    public class GetMessage
+    public class Signal
     {
-        public int PickCard { get; set; }
     }
 }

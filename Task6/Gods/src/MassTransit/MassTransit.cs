@@ -37,14 +37,14 @@ namespace Gods
             }
         }
 
-        public static async Task PublishToIlon(SendMessage sendMessage)
+        public static async Task PublishToIlon(InfoMessage sendMessage)
         {
             var exchange1Address = new Uri("rabbitmq://localhost:5672/ilon_queue");
             var endpoint = await _bus.GetSendEndpoint(exchange1Address);
             await endpoint.Send(sendMessage);
         }
 
-        public static async Task PublishToMark(SendMessage sendMessage)
+        public static async Task PublishToMark(InfoMessage sendMessage)
         {
             var exchange2Address = new Uri("rabbitmq://localhost:5672/mark_queue");
             var endpoint = await _bus.GetSendEndpoint(exchange2Address);

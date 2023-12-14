@@ -5,8 +5,9 @@ using CardPickStrategy;
 
 namespace Gods
 {
-    public class SendMessage
+    public class InfoMessage
     {
-        public Card[] Cards { get; set; }
+        public int cardPick { get; set; }
+        public Card[] cards { get; set; }
     }
 }

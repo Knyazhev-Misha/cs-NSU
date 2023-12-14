@@ -5,22 +5,35 @@ using CardPickStrategy;
 
 namespace Gods
 {
-    public class GodsConsumer : IConsumer<GetMessage>
+    public class GodsConsumer : IConsumer<Signal>
     {
-        public static int pickCardIlon = -1;
-        public static int pickCardMark = -1;
+        private static List<Boolean> ilonPick = new List<bool>();
+        private static List<Boolean> markPick = new List<bool>();
+        private static SemaphoreSlim semaphore = new SemaphoreSlim(1);
         
-        public async Task Consume(ConsumeContext<GetMessage> context)
-        {
-            var message = context.Message;                 
-
+        public async Task Consume(ConsumeContext<Signal> context)
+        {     
             var sourceAddress = context.SourceAddress.AbsolutePath; 
 
             string[] addressParts = sourceAddress.Split('_'); 
-            string specificPart = GetSendConsumer(addressParts, message.PickCard);
+            GetSendConsumer(addressParts);
+            CheckSend();
         }
 
-        private string GetSendConsumer(string[] addressParts, int pickCard)
+        private async Task CheckSend()
+        {
+            await semaphore.WaitAsync();
+            if(ilonPick.Count != 0 && markPick.Count != 0)
+                    {
+                        Console.WriteLine($"send");
+                        await Http.Send();
+                        ilonPick.RemoveAt(0);
+                        markPick.RemoveAt(0);
+                    }
+            semaphore.Release();
+        }
+
+        private async Task GetSendConsumer(string[] addressParts)
         {
             string marker = "Room";
             string ilonMarker = "IlonRoom";
@@ -32,19 +45,15 @@ namespace Gods
                 {
                     if(addressParts[i].IndexOf(ilonMarker) != -1)
                     {
-                        pickCardIlon = pickCard;
-                        Console.WriteLine($"\nПришло число: {pickCard} от Ilon");
+                        ilonPick.Add(true);
                     }
 
                     else if(addressParts[i].IndexOf(markMarker) != -1)
                     {
-                        pickCardMark = pickCard;
-                        Console.WriteLine($"\nПришло число: {pickCard} от Mark");
+                        markPick.Add(true);
                     }
                 }
             }
-
-            return "";
         }
     }
 }

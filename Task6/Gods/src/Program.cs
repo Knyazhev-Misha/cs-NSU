@@ -17,53 +17,26 @@ namespace Gods
 
             Colosseum colosseum = new Colosseum();
 
-            var ilonQueueUri = new Uri("rabbitmq://localhost:5672/ilon_queue");
-            var maskQueueUri = new Uri("rabbitmq://localhost:5672/mask_queue");
-
             while (parse)
             {
                 IPartner[] partner = colosseum.CreateIlonAndMask();
                 IPartner ilon = partner[0];
                 IPartner mark = partner[1];
 
-                var messageIlon = new SendMessage
+                var messageIlon = new InfoMessage
                 {
-                    Cards = ilon.cards
+                    cardPick = -1,
+                    cards = ilon.cards
                 };
 
-                var messageMark = new SendMessage
+                var messageMark = new InfoMessage
                 {
-                    Cards = mark.cards
+                    cardPick = -1,
+                    cards = mark.cards
                 };
 
                 await MassTransit.PublishToIlon(messageIlon);
                 await MassTransit.PublishToMark(messageMark);
-
-                DateTime startTime = DateTime.Now;
-                while(GodsConsumer.pickCardIlon == -1 || GodsConsumer.pickCardMark == -1){
-                    DateTime currentTime = DateTime.Now;
-                    TimeSpan elapsedTime = currentTime - startTime;
-
-                    if (elapsedTime.TotalSeconds >= 5)
-                    {
-
-                        if(GodsConsumer.pickCardIlon == -1)
-                        {
-                            await MassTransit.PublishToIlon(messageIlon);
-                        }
-
-                        if(GodsConsumer.pickCardMark == -1)
-                        {
-                            await MassTransit.PublishToMark(messageMark);
-                        }
-                        startTime = DateTime.Now;
-                    }
-                }
-
-                await Http.Send(ilon, mark, GodsConsumer.pickCardIlon, GodsConsumer.pickCardMark);
-
-                GodsConsumer.pickCardIlon = -1;
-                GodsConsumer.pickCardMark = -1;
 
                 Console.Write("Для продолжения эксперемента напишите число: ");
                 parse = int.TryParse(Console.ReadLine(), out num); 
